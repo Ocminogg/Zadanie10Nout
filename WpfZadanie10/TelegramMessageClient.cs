@@ -19,9 +19,43 @@ using Telegram.Bot.Polling;
 
 namespace WpfZadanie10
 {
-    class program
+    //class program
+    //{
+    //    static ITelegramBotClient bot = new TelegramBotClient("5560152751:AAExhnTdlWOYWWBWoxRbDZrOubywSxMfnic");
+    //    public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+    //    {
+    //        // Некоторые действия
+    //        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(update));
+    //        if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
+    //        {
+    //            var message = update.Message;
+    //            if (message.Text.ToLower() == "/start")
+    //            {
+    //                await botClient.SendTextMessageAsync(message.Chat, "Добро пожаловать на борт, добрый путник!");
+    //                return;
+    //            }                
+    //        }
+    //    }
+
+    //    public static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+    //    {
+    //        // Некоторые действия
+    //        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
+    //    }
+
+    //}
+    
+
+    class TelegramMessageClient
     {
-        static ITelegramBotClient bot = new TelegramBotClient("5560152751:AAExhnTdlWOYWWBWoxRbDZrOubywSxMfnic");
+
+        private static MainWindow w;
+
+        //private TelegramBotClient bot;
+        public static ObservableCollection<MessageLog> BotMessageLog { get; set; }
+        public MainWindow MainWindow { get; }
+
+        private ITelegramBotClient bot = new TelegramBotClient("5560152751:AAExhnTdlWOYWWBWoxRbDZrOubywSxMfnic");
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             // Некоторые действия
@@ -29,12 +63,34 @@ namespace WpfZadanie10
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
                 var message = update.Message;
+                ///////////////////////////////////////////////////////////////////////
+                if (message.Text != null)
+                {
+                    Console.WriteLine("---");
+                    Debug.WriteLine("+++---");
+
+                    string text = $"{DateTime.Now.ToLongTimeString()}: {message.Chat.FirstName} {message.Chat.Id} {message.Text}";
+
+                    Debug.WriteLine($"{text} TypeMessage: {message.Type.ToString()}");
+
+                    if (message.Text == null) return;
+
+                    var messageText = message.Text;
+
+                    w.Dispatcher.Invoke(() =>
+                    {
+                        BotMessageLog.Add(
+                        new MessageLog(
+                            DateTime.Now.ToLongTimeString(), messageText, message.Chat.FirstName, message.Chat.Id));
+                    });
+                }
+
+                /////////////////////////////////////////////////////////////////////
                 if (message.Text.ToLower() == "/start")
                 {
                     await botClient.SendTextMessageAsync(message.Chat, "Добро пожаловать на борт, добрый путник!");
                     return;
                 }
-                
             }
         }
 
@@ -44,17 +100,9 @@ namespace WpfZadanie10
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
         }
 
-    }
-    
 
-    class TelegramMessageClient
-    {
 
-        private MainWindow w;
-
-        private TelegramBotClient bot;
-        public ObservableCollection<MessageLog> BotMessageLog { get; set; }
-        public MainWindow MainWindow { get; }
+        
 
         public void MessageListener(object sender, ITelegramBotClient bot, Message message, CancellationToken cancellationToken)
         {
@@ -79,8 +127,8 @@ namespace WpfZadanie10
 
         public TelegramMessageClient(MainWindow W, string PathToken = "5560152751:AAExhnTdlWOYWWBWoxRbDZrOubywSxMfnic")
         {
-            this.BotMessageLog = new ObservableCollection<MessageLog>();
-            this.w = W;
+            BotMessageLog = new ObservableCollection<MessageLog>();
+            w = W;
             this.bot = new TelegramBotClient(PathToken);
 
             var cts = new CancellationTokenSource();
@@ -91,8 +139,8 @@ namespace WpfZadanie10
             //bot = new TelegramBotClient(PathToken);
 
             bot.StartReceiving(
-            updateHandler: program.HandleUpdateAsync,
-            pollingErrorHandler: program.HandleErrorAsync,
+            updateHandler: HandleUpdateAsync,
+            pollingErrorHandler: HandleErrorAsync,
             receiverOptions: receiverOptions,
             cancellationToken: cts.Token
             );

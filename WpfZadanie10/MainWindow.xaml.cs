@@ -25,12 +25,12 @@ namespace WpfZadanie10
         TelegramMessageClient client;
 
         public MainWindow()
-        {
+        {            
             InitializeComponent();
 
             client = new TelegramMessageClient(this);
-
-            logList.ItemsSource = client.BotMessageLog;
+            logList.ItemsSource = TelegramMessageClient.BotMessageLog;
+            //logList.ItemsSource = client.BotMessageLog;
         }
 
         private void btnMsgSendClick(object sender, RoutedEventArgs e)
