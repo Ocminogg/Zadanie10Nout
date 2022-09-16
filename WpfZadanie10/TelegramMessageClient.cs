@@ -79,12 +79,16 @@ namespace WpfZadanie10
 
         public TelegramMessageClient(MainWindow W, string PathToken = "5560152751:AAExhnTdlWOYWWBWoxRbDZrOubywSxMfnic")
         {
+            this.BotMessageLog = new ObservableCollection<MessageLog>();
+            this.w = W;
+            this.bot = new TelegramBotClient(PathToken);
+
             var cts = new CancellationTokenSource();
             var receiverOptions = new ReceiverOptions            
             {
                 AllowedUpdates = { }, // receive all update types
             };
-            bot = new TelegramBotClient(PathToken);
+            //bot = new TelegramBotClient(PathToken);
 
             bot.StartReceiving(
             updateHandler: program.HandleUpdateAsync,
@@ -93,11 +97,9 @@ namespace WpfZadanie10
             cancellationToken: cts.Token
             );
 
-            this.BotMessageLog = new ObservableCollection<MessageLog>();
-            this.w = W;
-
             
 
+            
             //bot.OnMessage += MessageListener;
             
         }

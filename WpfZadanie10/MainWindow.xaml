@@ -43,12 +43,11 @@
             <StackPanel>
                 <TextBlock x:Name="TargetSend" 
                            Text="{Binding ElementName=logList, Path=SelectedItem.Id}"
-                           Visibility="Collapsed"
+                           FontSize="20"
                            Margin="5"/>
 
                 <TextBox x:Name="txtMsgSend" FontSize="20" Margin="5"/>
-
-                <Button x:Name="btnMsgSend" FontSize="20" Content="Отправить" Margin="5" Click="btnMsgSendClick"/>
+                <Button x:Name="btnMsgSend" FontSize="20" Content="Отправить" Click="btnMsgSendClick"/>
             </StackPanel>
         </GroupBox>
     </Grid>
