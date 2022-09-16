@@ -56,7 +56,7 @@ namespace WpfZadanie10
         public ObservableCollection<MessageLog> BotMessageLog { get; set; }
         public MainWindow MainWindow { get; }
 
-        public void MessageListener(object sender, ITelegramBotClient botClient, Message message, CancellationToken cancellationToken)
+        public void MessageListener(object sender, ITelegramBotClient bot, Message message, CancellationToken cancellationToken)
         {
             Console.WriteLine("---");
             Debug.WriteLine("+++---");
@@ -80,10 +80,11 @@ namespace WpfZadanie10
         public TelegramMessageClient(MainWindow W, string PathToken = "5560152751:AAExhnTdlWOYWWBWoxRbDZrOubywSxMfnic")
         {
             var cts = new CancellationTokenSource();
-            var receiverOptions = new ReceiverOptions
+            var receiverOptions = new ReceiverOptions            
             {
                 AllowedUpdates = { }, // receive all update types
             };
+            bot = new TelegramBotClient(PathToken);
 
             bot.StartReceiving(
             updateHandler: program.HandleUpdateAsync,
@@ -95,7 +96,7 @@ namespace WpfZadanie10
             this.BotMessageLog = new ObservableCollection<MessageLog>();
             this.w = W;
 
-            bot = new TelegramBotClient("5560152751:AAExhnTdlWOYWWBWoxRbDZrOubywSxMfnic");
+            
 
             //bot.OnMessage += MessageListener;
             
